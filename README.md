@@ -1,5 +1,6 @@
 # telescope-funky.nvim
 A simple function navigator for telescope.nvim  
+![image](https://github.com/wasden/telescope-funky.nvim/blob/main/img/screenshot.png)
 ## Description
   symbols-outline is good, but it can't be searched and added text that is not symbols. I want something between navigator and outline  
   Similar to ctrlp-funky and LeaderF-funky
