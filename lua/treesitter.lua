@@ -65,8 +65,6 @@ M.make_results = function (rules)
 
   local function pick_treesitter_data(treesitter_all)
     for col_idx, kind_rule in pairs(rules) do
-      assert(treesitter_all[kind_rule],
-      string.format("cannot find tressiter kind:%s.", kind_rule))
       results[col_idx] = treesitter_all[kind_rule] or {}
     end
     debug("treesitter results:", results)
