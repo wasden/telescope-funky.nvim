@@ -14,6 +14,9 @@ end
 -- @table rules col_idx=kind
 -- @return col_idx={ text, lnum }
 M.make_result = function (rules)
+  if not rules then
+    return {}
+  end
   local results = {}
   for col_idx, _ in pairs(rules) do
       results[col_idx] = {}

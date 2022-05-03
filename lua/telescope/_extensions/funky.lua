@@ -138,11 +138,11 @@ local function make_results(rules)
     treesitter.make_results(treesitter_rules),
     regex.make_result(regex_rules)
   )
+  debug("columns results:", column_results)
   if #column_results ~= rule_cnt then
     error(string.format("missed rule, before rule_cnt:%s, after rule_cnt:%s",
       rule_cnt, #column_results))
   end
-  debug("columns results:", column_results)
 
   local row_results = merge_column_results(column_results)
   debug("row_results:", row_results)

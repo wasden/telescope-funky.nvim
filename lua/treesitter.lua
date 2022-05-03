@@ -18,8 +18,8 @@ end
 -- @table rules col_idx=kind
 -- @return { col_idx, text, lnum }
 M.make_results = function (rules)
-  if rules == nil then
-    return
+  if not rules then
+    return {}
   end
 
   local ts_locals = require "nvim-treesitter.locals"
@@ -28,12 +28,12 @@ M.make_results = function (rules)
   local has_nvim_treesitter, _ = pcall(require, "nvim-treesitter")
   if not has_nvim_treesitter then
     print("has no treesitter")
-    return
+    return {}
   end
   local bufnr = vim.api.nvim_get_current_buf()
   if not parsers.has_parser(parsers.get_buf_lang(bufnr)) then
     print("has no parser")
-    return
+    return {}
   end
 
   local results = {}
