@@ -49,6 +49,18 @@ use {
           treesitter_kind = "function",
         }
       },
+      cpp = {
+        {
+          regex = '^#if FOS_PART%("(.*)"%)',
+          sortable = true,
+          selectable = false,
+        },
+        {
+          sortable = true,
+          selectable = true,
+          treesitter_kind = "function|type|macro",
+        }
+      },
     }
   end
 }

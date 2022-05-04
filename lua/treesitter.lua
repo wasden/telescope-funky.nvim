@@ -1,6 +1,28 @@
 local debug = require('funky').debug()
 local M = {}
 
+local function merge_index_tables(tbl1, tbl2)
+  if tbl1 == nil or tbl2 == nil then
+    return tbl1 or tbl2 or {}
+  end
+
+  local base_tbl
+  local addon_tbl
+  if #tbl1 >= #tbl2 then
+    base_tbl = tbl1
+    addon_tbl = tbl2
+  else
+    base_tbl = tbl2
+    addon_tbl = tbl1
+  end
+
+  for _, value in pairs(addon_tbl) do
+    table.insert(base_tbl, value)
+  end
+
+  return base_tbl
+end
+
 
 local function prepare_match(entry)
   local entries = {}
@@ -18,7 +40,7 @@ end
 -- @table rules col_idx=kind
 -- @return { col_idx, text, lnum }
 M.make_results = function (rules)
-  if not rules then
+  if rules == nil or next(table) == nil  then
     return {}
   end
 
@@ -44,6 +66,7 @@ M.make_results = function (rules)
   -- @return table kind={text, lnum}
   local function get_treesitter_all()
     local treesitter_all = {}
+    local filter_duplicates_map = {}
     for _, definition in ipairs(ts_locals.get_definitions(bufnr)) do
       local entries = prepare_match(ts_locals.get_local_nodes(definition))
       for _, entry in ipairs(entries) do
@@ -52,12 +75,15 @@ M.make_results = function (rules)
         local text = vim.treesitter.query.get_node_text(entry.node, bufnr)
         local lnum, _, _, _ = ts_utils.get_node_range(entry.node)
 
-        treesitter_all[entry.kind] = treesitter_all[entry.kind] or {}
-        table.insert(treesitter_all[entry.kind], {
-          text = text,
-          lnum = lnum + 1, -- treesitter begin with 0
-        })
+        if filter_duplicates_map[text] == nil then
+          filter_duplicates_map[text] = true
 
+          treesitter_all[entry.kind] = treesitter_all[entry.kind] or {}
+          table.insert(treesitter_all[entry.kind], {
+            text = text,
+            lnum = lnum + 1, -- treesitter begin with 0
+          })
+        end
       end
     end
     return treesitter_all
@@ -65,7 +91,10 @@ M.make_results = function (rules)
 
   local function pick_treesitter_data(treesitter_all)
     for col_idx, kind_rule in pairs(rules) do
-      results[col_idx] = treesitter_all[kind_rule] or {}
+      -- kind_rule maybe: "function|type"
+      for kind in string.gmatch(kind_rule, "%a+") do
+        results[col_idx] = merge_index_tables(results[col_idx], treesitter_all[kind])
+      end
     end
     debug("treesitter results:", results)
     return results

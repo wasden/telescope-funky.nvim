@@ -192,10 +192,11 @@ end
 
 local function funky(opts)
   opts = opts or {}
-  local rules = assert(
-    config[vim.bo.filetype],
-    string.format('Current filetype %s is not configured.', vim.bo.filetype)
-  )
+  local rules = config[vim.bo.filetype]
+  if rules == nil then
+    print(string.format('Current filetype %s is not configured.', vim.bo.filetype))
+    return
+  end
 
   local results = make_results(rules)
   local current_pos = make_current_pos(results)
