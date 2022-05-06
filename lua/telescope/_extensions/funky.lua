@@ -192,6 +192,7 @@ end
 
 local function funky(opts)
   opts = opts or {}
+  opts["selection_strategy"] = 'closest'
   local rules = config[vim.bo.filetype]
   if rules == nil then
     print(string.format('Current filetype %s is not configured.', vim.bo.filetype))
